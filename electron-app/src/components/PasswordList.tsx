@@ -103,7 +103,7 @@ export default function PasswordList({
       <div className="content-topbar">
         <input
           className="search-bar"
-          placeholder="Search in VisageVault..."
+          placeholder="Search in Face Vault..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
         />

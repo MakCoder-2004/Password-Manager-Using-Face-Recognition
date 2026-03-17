@@ -1,58 +1,68 @@
-# ========================
-# Node / Electron
-# ========================
+# ==========================================
+# Face Vault - Project Ignore List
+# ==========================================
+
+# --- Node / Frontend ---
 node_modules/
 dist/
 dist-electron/
 release/
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# ========================
-# Python
-# ========================
+# --- Python / Backend ---
 __pycache__/
 *.py[cod]
-*.pyo
-*.egg-info/
-.eggs/
-*.egg
+*$py.class
+*.so
+.Python
+env/
 venv/
 .venv/
-env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# ========================
-# ML Models (large files)
-# ========================
+# --- ML Models & Data (Large files) ---
+# Models are too large for standard git. Recommend manual download/setup script.
 Face Recognition/models/
+Face Recognition/face_db/
+electron-app/python/
 
-# ========================
-# Face DB (user data)
-# ========================
-Face Recognition/face_db/*.npy
-
-# ========================
-# App Data / Database
-# ========================
+# --- Database / App Data ---
 *.db
 *.db-journal
 *.db-wal
+*.sqlite
+biometrics.npy
 
-# ========================
-# IDE / Editor
-# ========================
+# --- IDE / Editor ---
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
-Thumbs.db
 
-# ========================
-# Build / OS
-# ========================
+# --- Build Artifacts / OS ---
 *.exe
+*.msi
+*.zip
+*.tar.gz
 *.dmg
 *.AppImage
-*.snap
+*.pkg
+Thumbs.db

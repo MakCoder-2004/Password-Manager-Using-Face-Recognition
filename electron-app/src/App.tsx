@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import './index.css';
 import { useState, useEffect } from 'react';
-import { ScanFace, Shield, Binary, Cpu } from 'lucide-react';
+import { ScanFace, Shield, Cpu } from 'lucide-react';
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -116,7 +116,7 @@ function ModelLoader({ children }: { children: React.ReactNode }) {
         <div className="vortex-content">
           <div className="loading-bar-section">
             <p className="app-description pulse-reveal">
-              Initializing VisageVault secure biometric architecture. 
+              Initializing Face Vault secure biometric architecture. 
               Deploying advanced neural scanning protocols and multi-layered vault encryption for elite identity protection.
             </p>
             <div className="status-header">

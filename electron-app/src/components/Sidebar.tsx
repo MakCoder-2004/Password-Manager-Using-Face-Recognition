@@ -1,5 +1,5 @@
 import {
-  User, Key, Star, Shield, ChevronDown,
+  User, Key, Star, Shield,
   Plus, Users, LogOut, Power
 } from 'lucide-react';
 
@@ -31,7 +31,7 @@ export default function Sidebar({ activeVault, onSelectVault, vaults, onAddVault
           />
         </div>
         <span className="sidebar-title">
-          VisageVault
+          Face Vault
         </span>
       </div>
 
@@ -80,7 +80,7 @@ export default function Sidebar({ activeVault, onSelectVault, vaults, onAddVault
         </button>
         <button className="close-app-btn" onClick={onCloseApp}>
           <Power className="icon" size={18} />
-          <span>Close VisageVault</span>
+          <span>Close Face Vault</span>
         </button>
       </div>
 

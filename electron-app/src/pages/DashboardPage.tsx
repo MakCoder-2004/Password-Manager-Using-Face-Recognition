@@ -443,7 +443,7 @@ export default function DashboardPage() {
           setConfirmModal({
             isOpen: true,
             title: 'Logout',
-            message: 'Are you sure you want to log out of VisageVault? All session data will be cleared.',
+            message: 'Are you sure you want to log out of Face Vault? All session data will be cleared.',
             onConfirm: async () => {
               if (window.electronAPI) {
                 await window.electronAPI.logout();
@@ -460,7 +460,7 @@ export default function DashboardPage() {
           setConfirmModal({
             isOpen: true,
             title: 'Close Application',
-            message: 'Are you sure you want to close VisageVault? Secure environment will be shut down.',
+            message: 'Are you sure you want to close Face Vault? Secure environment will be shut down.',
             onConfirm: () => {
               if (window.electronAPI) {
                 window.electronAPI.closeWindow();

@@ -167,7 +167,7 @@ export default function LoginPage() {
         )}
 
         <p className="login-footer">
-          New to FaceVault? <Link to="/register">Create Account</Link>
+          New to Face Vault? <Link to="/register">Create Account</Link>
         </p>
       </div>
 

@@ -111,7 +111,7 @@ export default function RegisterPage() {
       
       <div className="login-card">
         <h1>Create Account</h1>
-        <p className="subtitle">Secure your digital life with FaceVault</p>
+        <p className="subtitle">Secure your digital life with Face Vault</p>
 
         <form onSubmit={handleRegister} className="auth-form">
           <div className="input-group">

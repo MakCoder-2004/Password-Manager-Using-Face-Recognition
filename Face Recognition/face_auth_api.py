@@ -40,9 +40,13 @@ available_providers = ort.get_available_providers()
 providers = ["CPUExecutionProvider"]
 ctx_id = -1
 
+# Prioritize CUDA (NVIDIA), then DirectML (Any Windows GPU), then CPU
 if "CUDAExecutionProvider" in available_providers:
     providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
     ctx_id = 0
+elif "DmlExecutionProvider" in available_providers:
+    providers = ["DmlExecutionProvider", "CPUExecutionProvider"]
+    ctx_id = 0 # DirectML uses device_id similar to CUDA in InsightFace config
 
 @contextmanager
 def suppress_stdout_stderr():
@@ -271,7 +275,17 @@ if __name__ == "__main__":
     parser.add_argument("--authenticate", action="store_true")
     parser.add_argument("--register", type=str)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--db-path", type=str, help="Absolute path to face_db folder")
     args = parser.parse_args()
+
+    if args.db_path:
+        DB_PATH = args.db_path
+
+    if not os.path.exists(DB_PATH):
+        try:
+            os.makedirs(DB_PATH)
+        except Exception as e:
+            logging.error(f"Cannot create DB_PATH: {e}")
 
     if args.server:
         # Long-running server mode reading from stdin

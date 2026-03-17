@@ -1,7 +1,9 @@
 {
   "name": "face-vault",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Biometric password manager with 3D liveness detection",
+  "author": "Makious",
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -14,13 +16,13 @@
   },
   "dependencies": {
     "better-sqlite3": "^12.8.0",
-    "electron": "^41.0.2",
     "lucide-react": "^0.577.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1"
   },
   "devDependencies": {
+    "electron": "^41.0.2",
     "@eslint/js": "^9.39.4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.12.0",
@@ -37,5 +39,47 @@
     "vite": "^8.0.0",
     "vite-plugin-electron": "^0.29.1",
     "vite-plugin-electron-renderer": "^0.14.6"
+  },
+  "build": {
+    "appId": "com.facevault.app",
+    "productName": "Face Vault",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist",
+      "dist-electron"
+    ],
+    "extraResources": [
+      {
+        "from": "../Face Recognition",
+        "to": "Face Recognition",
+        "filter": [
+          "**/*",
+          "!face_db/*.npy",
+          "!build",
+          "!dist"
+        ]
+      },
+      {
+        "from": "python",
+        "to": "python"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "requestedExecutionLevel": "asInvoker",
+      "artifactName": "${productName} Setup ${version}.${ext}",
+      "forceCodeSigning": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Face Vault"
+    }
   }
 }

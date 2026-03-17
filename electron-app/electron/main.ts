@@ -11,9 +11,35 @@ import { generatePassword } from './encryption';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Path to the Python face auth script and interpreter
-const PYTHON_PATH = 'D:\\Programming\\venvs\\cv-env\\Scripts\\python.exe';
-const FACE_AUTH_SCRIPT = path.resolve(__dirname, '../../Face Recognition/face_auth_api.py');
+// detect production mode
+const isProd = app.isPackaged;
+
+// Helper to find the bundled python executable
+function getPythonPath() {
+  if (!isProd) return 'D:\\Programming\\venvs\\cv-env\\Scripts\\python.exe';
+  
+  const possiblePaths = [
+    path.join(process.resourcesPath, 'python', 'Scripts', 'python.exe'),
+    path.join(process.resourcesPath, 'python', 'python.exe'),
+    path.join(process.resourcesPath, 'python', 'bin', 'python.exe'),
+  ];
+
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) return p;
+  }
+  
+  // Last resort: assume it's in the root of the python folder
+  return path.join(process.resourcesPath, 'python', 'python.exe');
+}
+
+const PYTHON_PATH = getPythonPath();
+
+const FACE_AUTH_SCRIPT = isProd
+  ? path.join(process.resourcesPath, 'Face Recognition', 'face_auth_api.py')
+  : path.resolve(__dirname, '../../Face Recognition/face_auth_api.py');
+
+// Path to biometric database (must be writable, even when installed)
+const FACE_DB_DIR = path.join(app.getPath('userData'), 'face_db');
 
 let mainWindow: BrowserWindow | null = null;
 let sessionKey: string | null = null; 
@@ -26,7 +52,7 @@ let isPythonReady = false;
 let pythonReadyResolvers: Array<() => void> = [];
 
 function startPythonServer() {
-  pythonProcess = spawn(PYTHON_PATH, [FACE_AUTH_SCRIPT, '--server']);
+  pythonProcess = spawn(PYTHON_PATH, [FACE_AUTH_SCRIPT, '--server', '--db-path', FACE_DB_DIR]);
   
   pythonProcess.stdout?.on('data', (data) => {
     pythonBuffer += data.toString();
@@ -39,10 +65,11 @@ function startPythonServer() {
           const result = JSON.parse(line.trim());
           
           if (result.status === 'ready') {
+            console.log('Python face-auth system is ready.');
             isPythonReady = true;
             pythonReadyResolvers.forEach(resolve => resolve());
             pythonReadyResolvers = [];
-            continue; // Not attached to a specific active request
+            continue; 
           }
 
           if (activeFaceRequest) {
@@ -99,6 +126,7 @@ function startPythonServer() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
+    show: false, // Don't show immediately
     title: 'Face Vault',
     width: 1200,
     height: 800,
@@ -122,6 +150,11 @@ function createWindow() {
     // In production, load the built HTML
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
+
+  // Show window only when content is ready
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show();
+  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -356,16 +389,9 @@ ipcMain.handle('auth:deleteAndResetFace', async (_event, name: string) => {
     dbService.deleteUserByName(name);
     
     // 2. Delete .npy file safely via Node
-    const faceDbPath = path.resolve(__dirname, '../../Face Recognition/face_db');
-    const npyPath = path.join(faceDbPath, `${name}.npy`);
+    const npyPath = path.join(FACE_DB_DIR, `${name}.npy`);
     if (fs.existsSync(npyPath)) {
       fs.unlinkSync(npyPath);
-    } else {
-      // Try alternate path just in case
-      const altPath = path.join(__dirname, '../Face Recognition/face_db', `${name}.npy`);
-      if (fs.existsSync(altPath)) {
-        fs.unlinkSync(altPath);
-      }
     }
     
     // 3. Instruct python to delete from its in-memory database and disk if node missed it
@@ -400,8 +426,21 @@ ipcMain.handle('face:recapture', async (_event, name: string) => {
 // IPC: Model Status
 ipcMain.handle('face:waitForReady', async () => {
   if (isPythonReady) return true;
+  
   return new Promise<boolean>((resolve) => {
-    pythonReadyResolvers.push(() => resolve(true));
+    // Add to pending resolvers
+    pythonReadyResolvers.push(() => {
+      clearTimeout(timeout);
+      resolve(true);
+    });
+
+    // Safety timeout: 45 seconds
+    const timeout = setTimeout(() => {
+      console.error('Python backend startup timed out.');
+      // Remove this resolver from the queue
+      pythonReadyResolvers = pythonReadyResolvers.filter(r => r !== resolve);
+      resolve(false); // Let the app continue even if Python isn't ready
+    }, 45000);
   });
 });
 
