@@ -338,6 +338,13 @@ body {
 
 ---
 
+## Status: ✅ COMPLETED (2026-03-17)
+
+### Implementation Notes
+- **ESM Support**: Fixed `__dirname` for ESM in `electron/main.ts`.
+- **Vite Config**: Configured `vite-plugin-electron` for main/preload builds.
+- **Verification**: Verified React app ↔ Electron window connection.
+
 ## Deliverables
 - [x] Electron main process (`electron/main.ts`)
 - [x] Preload script with IPC bridge (`electron/preload.ts`)

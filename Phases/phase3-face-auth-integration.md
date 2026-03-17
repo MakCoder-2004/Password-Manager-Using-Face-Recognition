@@ -418,8 +418,17 @@ const handleFaceLogin = async () => {
 
 ---
 
+## Status: ✅ COMPLETED (2026-03-17)
+
+### Implementation Notes
+- **Python IPC**: Successfully bridged Electron and Python using `child_process.spawn`.
+- **Interpreter**: Configured Electron to use the specific `cv-env` virtual environment interpreter for full compatibility with CV/ML libraries.
+- **Single-Frame Auth**: The Python script captures a single frame, runs InsightFace detection + recognition, and exits quickly to keep the experience snappy.
+- **CUDA Support**: Verified that the system correctly utilizes the GPU (`CUDAExecutionProvider`) when available in the user's environment.
+- **Error Handling**: Implemented robust parsing for Python output with timeouts and error catching.
+
 ## Deliverables
-- [ ] `face_auth_api.py` — Python CLI wrapper for Electron IPC
-- [ ] IPC handlers in `electron/main.ts` for face auth
-- [ ] `faceAuth.ts` — React service with dev mode fallback
-- [ ] End-to-end face login working from UI to Python and back
+- [x] `face_auth_api.py` — Python CLI wrapper for Electron IPC
+- [x] IPC handlers in `electron/main.ts` for face auth
+- [x] `faceAuth.ts` — React service with dev mode fallback
+- [x] End-to-end face login working from UI to Python and back

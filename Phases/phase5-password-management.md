@@ -77,9 +77,18 @@ CREATE TABLE passwords (
 7. ✅ Raw `.db` file shows encrypted values (not plaintext)
 8. ✅ Search filters by title/URL
 
+## Status: ✅ COMPLETED (2026-03-17)
+
+### Implementation Notes
+- **AES-256-GCM**: Implemented a robust encryption service using Node's `crypto` module, with PBKDF2 key derivation (100k iterations).
+- **SQLite Integration**: Used `better-sqlite3` for high-performance synchronous data storage.
+- **IPC Bridge**: Securely exposed database CRUD operations via Electron IPC, ensuring sensitive data is only decrypted in memory when needed.
+- **Glassmorphic Modal**: Built a custom `AddPasswordModal` with integrated password generation and secure fields.
+- **Automatic Fallback**: Included a browser-safe mock layer for easier development and testing outside the Electron wrapper.
+
 ## Deliverables
-- [ ] `encryption.ts` — AES-256-GCM service
-- [ ] `database.ts` — SQLite CRUD with encryption
-- [ ] IPC handlers for password/vault operations
-- [ ] `AddPasswordModal.tsx` — Modal component
-- [ ] Dashboard connected to real data
+- [x] `encryption.ts` — AES-256-GCM service
+- [x] `database.ts` — SQLite CRUD with encryption
+- [x] IPC handlers for password/vault operations
+- [x] `AddPasswordModal.tsx` — Modal component
+- [x] Dashboard connected to real data
