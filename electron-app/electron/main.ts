@@ -99,6 +99,7 @@ function startPythonServer() {
 
 function createWindow() {
   mainWindow = new BrowserWindow({
+    title: 'Face Vault',
     width: 1200,
     height: 800,
     minWidth: 900,
@@ -354,10 +355,22 @@ ipcMain.handle('auth:deleteAndResetFace', async (_event, name: string) => {
     // 1. Delete from SQLite
     dbService.deleteUserByName(name);
     
-    // 2. Delete .npy file
-    const npyPath = path.join(__dirname, '../../Face Recognition/face_db', `${name}.npy`);
+    // 2. Delete .npy file safely via Node
+    const faceDbPath = path.resolve(__dirname, '../../Face Recognition/face_db');
+    const npyPath = path.join(faceDbPath, `${name}.npy`);
     if (fs.existsSync(npyPath)) {
       fs.unlinkSync(npyPath);
+    } else {
+      // Try alternate path just in case
+      const altPath = path.join(__dirname, '../Face Recognition/face_db', `${name}.npy`);
+      if (fs.existsSync(altPath)) {
+        fs.unlinkSync(altPath);
+      }
+    }
+    
+    // 3. Instruct python to delete from its in-memory database and disk if node missed it
+    if (pythonProcess && pythonProcess.stdin) {
+      pythonProcess.stdin.write(JSON.stringify({ action: 'delete', name }) + '\n');
     }
     
     return { success: true };

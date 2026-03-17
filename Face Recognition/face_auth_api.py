@@ -294,6 +294,15 @@ if __name__ == "__main__":
                     print(json.dumps(res))
                 elif action == "check":
                     print(json.dumps(health_check()))
+                elif action == "delete":
+                    name_to_del = cmd.get("name")
+                    if name_to_del:
+                        path_to_del = os.path.join(DB_PATH, f"{name_to_del}.npy")
+                        if os.path.exists(path_to_del):
+                            os.remove(path_to_del)
+                            print(json.dumps({"status": "success", "message": f"Deleted {name_to_del}"}))
+                        else:
+                            print(json.dumps({"status": "error", "message": "File not found"}))
                 else:
                     print(json.dumps({"status": "error", "message": "Unknown action"}))
             except Exception as e:
